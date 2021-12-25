@@ -1,0 +1,48 @@
+version: '3.9'
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile
+    container_name: fs-freelance-app-api
+    restart: unless-stopped
+    ports:
+      - "5002:80" #used in production build
+    environment:
+      - API_DB_URL=mongodb://${API_DB_USER}:${API_DB_PASSWORD}@api_db:27017/blog?authSource=admin
+      - API_KEY=${API_KEY}
+      - CLOUDINARY_NAME=${CLOUDINARY_NAME}
+      - CLOUDINARY_KEY=${CLOUDINARY_KEY}
+      - CLOUDINARY_SECRET=${CLOUDINARY_SECRET}
+      - CLOUDINARY_URL=cloudinary://${CLOUDINARY_KEY}:${CLOUDINARY_SECRET}@${CLOUDINARY_NAME}
+      ##- AUTH_API_URL=http://auth:5001
+    command: >
+      pwsh Set API_KEY=${API_KEY}  && Set API_DB_URL=${API_DB_URL} && Set
+      CLOUDINARY_NAME=${CLOUDINARY_NAME} && Set CLOUDINARY_KEY=${CLOUDINARY_KEY}
+      && Set CLOUDINARY_SECRET=${CLOUDINARY_SECRET} && Set
+      CLOUDINARY_URL=${CLOUDINARY_URL}
+    depends_on:
+      - api_db
+    networks:
+      - fs-freelance-app-network
+
+  api_db:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${API_DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${API_DB_PASSWORD}
+    #command: mongo
+    container_name: fs-freelance-app-db
+    volumes:
+      - mongodb_api:/data/db
+    networks:
+      - fs-freelance-app-network
+
+volumes:
+  mongodb_api:
+
+    null
+networks:
+  fs-freelance-app-network:
+    driver: bridge
+    external: false
