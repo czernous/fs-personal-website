@@ -6,12 +6,14 @@ services:
       dockerfile: ./Dockerfile
     container_name: fs-freelance-app-api
     restart: unless-stopped
-    ports:
-      - "5002:80" #used in production build
+    #ports:
+      ##- "9000:80" #used in production build
     volumes:
       - ./api:/app
       - .env:/app/env/.env
     environment:
+      - PORT=9000
+      - HOST=http://fs-app.loc
       - API_DB_URL=mongodb://${API_DB_USER}:${API_DB_PASSWORD}@api_db:27017/blog?authSource=admin
       - API_KEY=${API_KEY}
       - CLOUDINARY_NAME=${CLOUDINARY_NAME}
@@ -40,12 +42,40 @@ services:
       - mongodb_api:/data/db
     networks:
       - fs-freelance-app-network
+  nginx:
+    build: ./nginx
+    container_name: fs-freelance-app-nginx
+    ports:
+      - "${NGINX_EXPOSED_PORT}:80"
+    volumes:
+      - ./nginx/configs/nginx.conf.prod:/etc/nginx/templates/default.conf.template
+      - .env:/etc/nginx/environment/.env
+    environment:
+      - NGINX_HOST=${PROD_NGINX_HOST}
+      - NGINX_PORT=&{NGINX_PORT}
+    command: >
+      bin/bash -c "source /etc/nginx/environment/.env && envsubst \"`for v in
+      $$(compgen -v);do printf '$${%s} ' $$v;done`'\" <
+      /etc/nginx/templates/default.conf.template > etc/nginx/conf.d/nginx.conf
+      && nginx -g 'daemon off;'"
+    depends_on:
+      - api
+    # labels:
+    #   - traefik.backend=sample
+    #   ##- traefik.frontend.rule=Host:sample-docker.com
+    #   - traefik.docker.network=fs-freelance-app-external-network
+    #   - traefik.port=80
+    networks:
+      # - fs-freelance-app-external-network
+      - fs-freelance-app-network
 
 volumes:
   mongodb_api:
 
     null
 networks:
+  # fs-freelance-app-external-network:
+  #   external: true
   fs-freelance-app-network:
     driver: bridge
     external: false

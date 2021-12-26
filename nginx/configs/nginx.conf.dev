@@ -1,0 +1,9 @@
+server {
+    listen ${NGINX_PORT};
+    server_name ${NGINX_HOST};
+    
+    location /api {
+        rewrite ^/api/(.*) /$1 break;
+        proxy_pass http://api:5000;
+    }
+}
