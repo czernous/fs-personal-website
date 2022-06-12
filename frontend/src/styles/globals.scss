@@ -1,0 +1,19 @@
+// @import './libs/bootstrap/bootstrap-reboot.scss';
+// @import './libs/bootstrap/bootstrap-utilities.scss';
+// @import './libs/bootstrap/bootstrap-grid.scss';
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: 'Sanchez', serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
