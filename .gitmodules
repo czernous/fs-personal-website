@@ -1,3 +1,6 @@
 [submodule "api"]
 	path = api
 	url = git@github.com:czernous/dotnetcore-blog-api.git
+[submodule "frontend"]
+	path = frontend
+	url = git@github.com:czernous/nextjs-freelance-website.git
