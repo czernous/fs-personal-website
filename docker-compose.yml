@@ -1,5 +1,15 @@
 version: '3.9'
 services:
+  frontend:
+    build:
+      dockerfile: ./Dockerfile.prod
+      context: ./frontend
+      args:
+        NODE_VERSION: ${NODE_VERSION}
+    container_name: fs-freelance-app-frontend
+    command: npm run start
+    networks:
+      - fs-freelance-app-network
   api:
     build:
       context: ./api
@@ -7,7 +17,7 @@ services:
     container_name: fs-freelance-app-api
     restart: unless-stopped
     #ports:
-      ##- "9000:80" #used in production build
+    ##- "9000:80" #used in production build
     volumes:
       - ./api:/app
       - .env:/app/env/.env
@@ -22,10 +32,7 @@ services:
       - CLOUDINARY_URL=cloudinary://${CLOUDINARY_KEY}:${CLOUDINARY_SECRET}@${CLOUDINARY_NAME}
       ##- AUTH_API_URL=http://auth:5001
     command: >
-      pwsh Set API_KEY=${API_KEY}  && Set API_DB_URL=${API_DB_URL} && Set
-      CLOUDINARY_NAME=${CLOUDINARY_NAME} && Set CLOUDINARY_KEY=${CLOUDINARY_KEY}
-      && Set CLOUDINARY_SECRET=${CLOUDINARY_SECRET} && Set
-      CLOUDINARY_URL=${CLOUDINARY_URL}
+      pwsh Set API_KEY=${API_KEY}  && Set API_DB_URL=${API_DB_URL} && Set CLOUDINARY_NAME=${CLOUDINARY_NAME} && Set CLOUDINARY_KEY=${CLOUDINARY_KEY} && Set CLOUDINARY_SECRET=${CLOUDINARY_SECRET} && Set CLOUDINARY_URL=${CLOUDINARY_URL}
     depends_on:
       - api_db
     networks:
@@ -40,6 +47,7 @@ services:
     container_name: fs-freelance-app-db
     volumes:
       - mongodb_api:/data/db
+      - ./data/api-db/backup:/backup/
     networks:
       - fs-freelance-app-network
   nginx:
@@ -54,10 +62,7 @@ services:
       - NGINX_HOST=${PROD_NGINX_HOST}
       - NGINX_PORT=&{NGINX_PORT}
     command: >
-      bin/bash -c "source /etc/nginx/environment/.env && envsubst \"`for v in
-      $$(compgen -v);do printf '$${%s} ' $$v;done`'\" <
-      /etc/nginx/templates/default.conf.template > etc/nginx/conf.d/nginx.conf
-      && nginx -g 'daemon off;'"
+      bin/bash -c "source /etc/nginx/environment/.env && envsubst \"`for v in $$(compgen -v);do printf '$${%s} ' $$v;done`'\" < /etc/nginx/templates/default.conf.template > etc/nginx/conf.d/nginx.conf && nginx -g 'daemon off;'"
     depends_on:
       - api
     # labels:
