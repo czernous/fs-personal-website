@@ -26,7 +26,15 @@ services:
   nginx:
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/configs/nginx.conf.dev:/etc/nginx/templates/default.conf.template
+
     environment:
       - NGINX_HOST=${DEV_NGINX_HOST}
+    build: 
+      args:
+        NGINX_HOST: ${NGINX_HOST}
+
+
+

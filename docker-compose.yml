@@ -54,7 +54,10 @@ services:
     networks:
       - fs-freelance-app-network
   nginx:
-    build: ./nginx
+    build: 
+      args:
+       NGINX_HOST: ${NGINX_HOST}
+      context: ./nginx
     container_name: fs-freelance-app-nginx
     ports:
       - "${NGINX_EXPOSED_PORT}:80"
