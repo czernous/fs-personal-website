@@ -19,7 +19,7 @@ server {
     
     location /backend {
         rewrite ^/backend/(.*) /$1 break;
-        proxy_pass https://api:5001;
+        proxy_pass http://api:5000;
  
     }
 

@@ -1,0 +1,5 @@
+ARG NGINX_HOST
+
+FROM nginx:stable-alpine
+
+RUN apk add --no-cache bash

@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 services:
   frontend:
     build:
@@ -6,9 +6,12 @@ services:
       context: ./frontend
       args:
         NODE_VERSION: ${NODE_VERSION}
+        NGINX_HOST: ${PROD_NGINX_HOST}
     environment:
       - HOST=${PROD_NGINX_HOST}
       - API_KEY=${API_KEY}
+      - BACKEND_URL=api:9000
+      - APP_NAME=${APP_NAME}
     container_name: fs-freelance-app-frontend
     command: npm run start
     networks:
@@ -19,8 +22,6 @@ services:
       dockerfile: ./Dockerfile
     container_name: fs-freelance-app-api
     restart: unless-stopped
-    #ports:
-    ##- "9000:80" #used in production build
     volumes:
       - ./api:/app
       - .env:/app/env/.env
@@ -54,9 +55,10 @@ services:
     networks:
       - fs-freelance-app-network
   nginx:
-    build: 
+    build:
+      dockerfile: ./Dockerfile.prod
       args:
-       NGINX_HOST: ${NGINX_HOST}
+        NGINX_HOST: ${NGINX_HOST}
       context: ./nginx
     container_name: fs-freelance-app-nginx
     ports:
@@ -81,9 +83,7 @@ services:
       - fs-freelance-app-network
 
 volumes:
-  mongodb_api:
-
-    null
+  mongodb_api: null
 networks:
   # fs-freelance-app-external-network:
   #   external: true
