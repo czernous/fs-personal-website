@@ -23,6 +23,13 @@ server {
  
     }
 
+
+    location /auth {
+        rewrite ^/auth/(.*) /$1 break;
+        proxy_pass http://auth:5001;
+ 
+    }
+
     location /api/ {
         proxy_pass http://frontend:3000/api/;
         # upgrade http for ws

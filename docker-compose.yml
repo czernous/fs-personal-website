@@ -11,7 +11,9 @@ services:
       - HOST=${PROD_NGINX_HOST}
       - API_KEY=${API_KEY}
       - BACKEND_URL=api:9000
+      - AUTH_URL=auth:5001
       - APP_NAME=${APP_NAME}
+      - ADMIN_EMAILS=${ADMIN_EMAILS}
     container_name: fs-freelance-app-frontend
     command: npm run start
     networks:
@@ -20,6 +22,13 @@ services:
     build:
       context: ./api
       dockerfile: ./Dockerfile
+      args:
+        API_KEY: ${API_KEY}
+        API_DB_URL: ${API_DB_URL}
+        CLOUDINARY_NAME: ${CLOUDINARY_NAME}
+        CLOUDINARY_KEY: ${CLOUDINARY_KEY}
+        CLOUDINARY_SECRET: ${CLOUDINARY_SECRET}
+        CLOUDINARY_URL: ${CLOUDINARY_URL}
     container_name: fs-freelance-app-api
     restart: unless-stopped
     volumes:
@@ -35,13 +44,25 @@ services:
       - CLOUDINARY_SECRET=${CLOUDINARY_SECRET}
       - CLOUDINARY_URL=cloudinary://${CLOUDINARY_KEY}:${CLOUDINARY_SECRET}@${CLOUDINARY_NAME}
       ##- AUTH_API_URL=http://auth:5001
-    command: >
-      pwsh Set API_KEY=${API_KEY}  && Set API_DB_URL=${API_DB_URL} && Set CLOUDINARY_NAME=${CLOUDINARY_NAME} && Set CLOUDINARY_KEY=${CLOUDINARY_KEY} && Set CLOUDINARY_SECRET=${CLOUDINARY_SECRET} && Set CLOUDINARY_URL=${CLOUDINARY_URL}
+      # command: >
+      #   pwsh Set API_KEY=${API_KEY}  && Set API_DB_URL=${API_DB_URL} && Set CLOUDINARY_NAME=${CLOUDINARY_NAME} && Set CLOUDINARY_KEY=${CLOUDINARY_KEY} && Set CLOUDINARY_SECRET=${CLOUDINARY_SECRET} && Set CLOUDINARY_URL=${CLOUDINARY_URL}
+
     depends_on:
       - api_db
     networks:
       - fs-freelance-app-network
-
+  auth:
+    build:
+      dockerfile: ./Dockerfile
+      context: ./auth
+    container_name: fs-freelance-app-auth
+    restart: unless-stopped
+    volumes:
+      - .env:/app/.env
+    environment:
+      - PORT=5001
+    networks:
+      - fs-freelance-app-network
   api_db:
     image: mongo:latest
     environment:

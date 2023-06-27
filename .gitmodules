@@ -4,3 +4,6 @@
 [submodule "frontend"]
 	path = frontend
 	url = git@github.com:czernous/nextjs-freelance-website.git
+[submodule "auth"]
+	path = auth
+	url = git@github.com:czernous/email-auth.git
