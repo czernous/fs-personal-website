@@ -7,3 +7,6 @@
 [submodule "auth"]
 	path = auth
 	url = git@github.com:czernous/email-auth.git
+[submodule "env-gen"]
+	path = env-gen
+	url = git@github.com:czernous/env-gen.git
