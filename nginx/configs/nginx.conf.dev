@@ -26,7 +26,7 @@ server {
 
     location /auth {
         rewrite ^/auth/(.*) /$1 break;
-        proxy_pass http://auth:5001;
+        proxy_pass http://auth:5001/api/;
  
     }
 
