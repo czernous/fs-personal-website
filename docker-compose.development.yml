@@ -14,11 +14,11 @@ services:
     build:
       context: ./api
       dockerfile: ./Dockerfile.development
-    # ports:
-     # - "5000:5000" #dev-port-http
-     # - "5001:5001" #dev-port-https
-    # environment:
-    #   - PORT=5000
+    ports:
+     - "5000:5000" #dev-port-http
+    #  - "5001:5001" #dev-port-https
+    environment:
+      - PORT=5000
     volumes:
       - ./api:/app
       - .env:/app/env/.env

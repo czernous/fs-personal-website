@@ -17,9 +17,9 @@ services:
       - ./api:/app
       - .env:/app/env/.env
     ports:
-      - 5000:5000
+      - 80:80
     environment:
-      - PORT=5000
+      - PORT=80
       # - HOST=http://fs-app.loc
       - API_DB_URL=mongodb://${API_DB_USER}:${API_DB_PASSWORD}@api_db:27017/blog?authSource=admin
       - API_KEY=${API_KEY}
