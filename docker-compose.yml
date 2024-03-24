@@ -16,10 +16,10 @@ services:
     volumes:
       - ./api:/app
       - .env:/app/env/.env
-    ports:
-      - 80:80
+    # ports:
+    #   - 80:80
     environment:
-      - PORT=80
+      # - PORT=80
       # - HOST=http://fs-app.loc
       - API_DB_URL=mongodb://${API_DB_USER}:${API_DB_PASSWORD}@api_db:27017/blog?authSource=admin
       - API_KEY=${API_KEY}
@@ -35,8 +35,8 @@ services:
       - api_db
     networks:
       - fs-freelance-app-network
-    tty:
-      true  
+    # tty:
+    #   true  
     # healthcheck:
     #   test: curl --fail http://localhost:5000/ready || exit 1
     #   interval: 5s
@@ -120,9 +120,10 @@ services:
       - fs-freelance-app-network
   nginx:
     restart: unless-stopped
-    depends_on:
-      - api
-      - auth
+    # depends_on:
+    #   - api_db
+    #   - api
+    #   - auth
     build:
       dockerfile: ./Dockerfile.prod
       args:
